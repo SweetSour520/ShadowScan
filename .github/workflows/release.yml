@@ -3,11 +3,11 @@ name: Build and Release ShadowScan
 on:
   push:
     tags:
-      - 'v*' # 当推送 v1.0.0, v1.0.1 等标签时触发
-  workflow_dispatch: # 允许你在 Actions 页面手动点击按钮触发打包
+      - 'v*'
+  workflow_dispatch:
 
 permissions:
-  contents: write # 必须赋予写权限，否则无法上传打包后的文件到 Release
+  contents: write
 
 jobs:
   createrelease:
@@ -15,8 +15,17 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # 同时启动三台虚拟机：Linux, Windows, macOS
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        # os_name 用于后续压缩包命名
+        include:
+          - os: ubuntu-latest
+            os_name: linux
+            artifact_name: ShadowScan
+          - os: windows-latest
+            os_name: win
+            artifact_name: ShadowScan.exe
+          - os: macos-latest
+            os_name: mac
+            artifact_name: ShadowScan
 
     steps:
       - name: Checkout code
@@ -25,7 +34,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9' # 使用兼容性较好的 Python 版本
+          python-version: '3.9'
 
       - name: Install dependencies
         run: |
@@ -33,15 +42,33 @@ jobs:
           pip install pyinstaller -r requirements.txt
 
       - name: Build with PyInstaller
-        # 重要：ShadowScan.py 的大小写必须与你项目中的文件名完全一致
         run: pyinstaller --onefile --clean ShadowScan.py
+
+      - name: Prepare Workspace and Zip
+        shell: bash
+        run: |
+          # 1. 创建一个临时发布的文件夹
+          STAGING="ShadowScan_1.0.0_${{ matrix.os_name }}"
+          mkdir -p "$STAGING/directory"
+          
+          # 2. 拷贝二进制文件（从 dist 目录）
+          cp dist/${{ matrix.artifact_name }} "$STAGING/"
+          
+          # 3. 拷贝字典和文档 
+          cp directory/domain_list.txt "$STAGING/directory/"
+          cp README.md "$STAGING/"
+          cp LICENSE "$STAGING/" || true
+          
+          # 4. 打包成 ZIP
+          if [ "${{ matrix.os_name }}" == "win" ]; then
+            7z a "$STAGING.zip" "$STAGING"
+          else
+            zip -r "$STAGING.zip" "$STAGING"
+          fi
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
         with:
-          # 自动识别生成的文件：Windows 是 .exe，Linux/Mac 是无后缀文件
-          files: |
-            dist/ShadowScan*
-            dist/*.exe
+          files: ShadowScan_1.0.0_${{ matrix.os_name }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
