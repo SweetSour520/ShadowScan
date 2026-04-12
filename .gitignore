@@ -1,6 +1,16 @@
+# 扫描结果
+URL/
+
+# Python 缓存
 __pycache__/
-*.pyc
-.vscode/
-.idea/
-dist/
+*.py[cod]
+*$py.class
+
+# PyInstaller & 构建
 build/
+dist/
+*.spec
+
+# 虚拟环境
+venv/
+.venv/
