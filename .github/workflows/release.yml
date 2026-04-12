@@ -1,74 +1,72 @@
-name: Build and Release ShadowScan
+name: Build and Release
 
 on:
   push:
     tags:
-      - 'v*'
-  workflow_dispatch:
-
-permissions:
-  contents: write
+      - 'v*' # 只有推送 v 开头的标签才会触发
 
 jobs:
-  createrelease:
-    name: Build for ${{ matrix.os }}
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # os_name 用于后续压缩包命名
+        os: [windows-latest, ubuntu-latest, macos-latest]
         include:
-          - os: ubuntu-latest
-            os_name: linux
-            artifact_name: ShadowScan
           - os: windows-latest
-            os_name: win
             artifact_name: ShadowScan.exe
-          - os: macos-latest
-            os_name: mac
+            asset_name: ShadowScan_win.zip
+          - os: ubuntu-latest
             artifact_name: ShadowScan
+            asset_name: ShadowScan_linux.zip
+          - os: macos-latest
+            artifact_name: ShadowScan
+            asset_name: ShadowScan_mac.zip
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pyinstaller -r requirements.txt
+          pip install -r requirements.txt
+          pip install pyinstaller
 
       - name: Build with PyInstaller
-        run: pyinstaller --onefile --clean ShadowScan.py
+        run: |
+          pyinstaller --onefile --name ${{ matrix.artifact_name }} ShadowScan.py
 
       - name: Prepare Workspace and Zip
         shell: bash
         run: |
-          # 1. 使用等号定义变量
-          STAGING="ShadowScan_${{ github.ref_name }}_${{ matrix.os_name }}"
+          # 修正变量定义使用 = 
+          STAGING="ShadowScan_${{ github.ref_name }}_${{ matrix.os }}"
           mkdir -p "$STAGING/directory"
           
-          # 2. 拷贝二进制文件
+          # 动态拷贝不同系统的二进制文件
           cp dist/${{ matrix.artifact_name }} "$STAGING/"
           
-          # 3. 拷贝资源文件（请务必确认目录名是 directory）
-          cp directory/domain_list.txt "$STAGING/directory/"
+          # 拷贝资源文件（确保你的仓库里有 directory 文件夹）
+          cp directory/domain_list.txt "$STAGING/directory/" || echo "No dict found"
           cp README.md "$STAGING/"
-          cp LICENSE "$STAGING/" || true
+          cp LICENSE "$STAGING/" || echo "No license found"
           
-          # 4. 打包
-          if [ "${{ matrix.os_name }}" == "win" ]; then
-            7z a "$STAGING.zip" "$STAGING"
+          # 根据系统选择打包工具
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            7z a "${{ matrix.asset_name }}" "$STAGING"
           else
-            zip -r "$STAGING.zip" "$STAGING"
+            zip -r "${{ matrix.asset_name }}" "$STAGING"
           fi
 
       - name: Upload Release Asset
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ShadowScan_1.0.0_${{ matrix.os_name }}.zip
+          files: ${{ matrix.asset_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
