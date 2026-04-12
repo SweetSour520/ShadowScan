@@ -23,6 +23,7 @@ def signal_handler(sig, frame):
     """
     global exit_flag
     exit_flag = True
+    print("\n")
     print('\033[91m[*]已退出程序\033[0m')
     sys.exit(0)
 
@@ -30,26 +31,37 @@ signal.signal(signal.SIGINT, signal_handler)
 
 def show_banner():
     """
-    显示启动界面
+    启动界面
     """
-    banner = """\033[92m
-███████╗██╗  ██╗ █████╗ ██████╗  ██████╗ ██╗    ██╗███████╗ ██████╗ █████╗ ███╗   ██╗
-██╔════╝██║  ██║██╔══██╗██╔══██╗██╔═══██║██║    ██║██╔════╝██╔════╝██╔══██╗████╗  ██║
-███████╗███████║███████║██║  ██║██║   ██║██║ █╗ ██║███████╗██║     ███████║██╔██╗ ██║
-╚════██║██╔══██║██╔══██║██║  ██║██║   ██║██║███╗██║╚════██║██║     ██╔══██║██║╚██╗██║
-███████║██║  ██║██║  ██║██████╔╝╚██████╔╝╚███╔███╔╝███████║╚██████╗██║  ██║██║ ╚████║
-╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝  ╚═════╝  ╚══╝╚══╝ ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝\033[96m
-———————— ShadowScan v1.0.0 - Trace the Shadow, Link All Hidden Domains ————————\033[93m
+    # Logo 渐变色阶 (亮青 -> 深蓝)
+    logo_colors = [45, 45, 39, 33, 27, 21]
+
+    ascii_art = [
+        "███████╗██╗  ██╗ █████╗ ██████╗  ██████╗ ██╗    ██╗███████╗ ██████╗ █████╗ ███╗   ██╗",
+        "██╔════╝██║  ██║██╔══██╗██╔══██╗██╔═══██║██║    ██║██╔════╝██╔════╝██╔══██╗████╗  ██║",
+        "███████╗███████║███████║██║  ██║██║   ██║██║ █╗ ██║███████╗██║     ███████║██╔██╗ ██║",
+        "╚════██║██╔══██║██╔══██║██║  ██║██║   ██║██║███╗██║╚════██║██║     ██╔══██║██║╚██╗██║",
+        "███████║██║  ██║██║  ██║██████╔╝╚██████╔╝╚███╔███╔╝███████║╚██████╗██║  ██║██║ ╚████║",
+        "╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝  ╚═════╝  ╚══╝╚══╝ ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝"
+    ]
+
+    # 打印 Logo
+    for i, line in enumerate(ascii_art):
+        color = f"\033[38;5;{logo_colors[i % len(logo_colors)]}m"
+        print(f"{color}{line}")
+
+    # 分割线 141 (亮紫)，信息 93 (深紫)
+    banner_text = f"""\033[38;5;141m———————— ShadowScan v1.1.2 - Trace the Shadow, Link All Hidden Domains ————————\033[38;5;93m
 [*]项目地址：https://github.com/SweetSour520/ShadowScan
 [*]BY.SweetSour\033[0m"""
-    print(banner)
+    print(banner_text)
 
 
 def show_help():
     """
     显示帮助信息
     """
-    help_text = """\033[92m
+    help_text = """\033[38;5;45m
 命令格式：
     python ShadowScan.py [选项]
 
@@ -238,27 +250,27 @@ def main():
         show_help()
         return
 
-    domain = input('\033[96m请输入域名：\033[0m')
+    domain = input('\033[38;5;141m请输入域名：\033[0m')
     r_domain = remove_prefix(domain)
 
-    thread_input = input('\033[96m请输入线程数（默认10）：\033[0m')
+    thread_input = input('\033[38;5;141m请输入线程数（默认10）：\033[0m')
     threads = int(thread_input) if thread_input.isdigit() and int(thread_input) > 0 else 10
 
-    directory_choice = input('\033[96m请选择字典类型：\n\033[93m1.默认字典\n2.自定义字典\n\033[96m请输入选项：\033[0m')
+    directory_choice = input('\033[38;5;141m请选择字典类型：\n\033[38;5;45m1.默认字典\n2.自定义字典\n\033[38;5;141m请输入选项：\033[0m')
 
     if directory_choice == '1' or directory_choice == '':
-        print('\033[96m—————————————————— 开始扫描 ——————————————————\033[0m')
+        print('\033[38;5;141m[—————————————————————————————————— 开始扫描 ———————————————————————————————————]\033[0m')
         req(r_domain, status_include=args['status_include'], status_exclude=args['status_exclude'], show_ip=args['show_ip'], threads=threads)
     elif directory_choice == '2':
-        directory = input('请输入字典路径：')
-        print('\033[96m—————————————————— 开始扫描 ——————————————————\033[0m')
+        directory = input('\033[38;5;141m请输入字典路径：')
+        print('\033[38;5;141m[—————————————————————————————————— 开始扫描 ———————————————————————————————————]\\033[0m')
         req(r_domain, directory, status_include=args['status_include'], status_exclude=args['status_exclude'], show_ip=args['show_ip'], threads=threads)
     else:
         print('\033[91m[!]无效的选项，将使用默认字典\033[0m')
-        print('\033[96m—————————————————— 开始扫描 ——————————————————\033[0m')
+        print('\033[38;5;141m[—————————————————————————————————— 开始扫描 ———————————————————————————————————]\\033[0m')
         req(r_domain, status_include=args['status_include'], status_exclude=args['status_exclude'], show_ip=args['show_ip'], threads=threads)
 
-    print('\033[96m—————————————————— 扫描结束 ——————————————————\033[0m')
+    print('\033[38;5;141m[—————————————————————————————————— 扫描结束 ———————————————————————————————————]\033[0m')
 
 
 if __name__ == "__main__":

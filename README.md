@@ -1,10 +1,12 @@
 # 👁️ ShadowScan (潜影)
 > **Trace the Shadow, Link All Hidden Domains.** > 人生中第一个子域名扫描工具，不追求新意，存在本身就是它的意义。
+>
 
-[![Python Version](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/)[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)[![Status](https://img.shields.io/badge/status-Stable-green.svg)]()
+![](https://img.shields.io/badge/python-3.7+-blue.svg)  
+![](https://img.shields.io/badge/license-GPL--3.0-blue.svg)  
+![](https://img.shields.io/badge/status-Developing-orange.svg)
 
 ## 📖 简介 / Introduction
-
 **ShadowScan (潜影)** ，一款简易的子域名发现与探活工具。
 
 ---
@@ -15,6 +17,7 @@
 + 🔍 **双向状态过滤**：
     - `-s/--status`: 包含模式，仅查看你关心的状态码（如 200, 302）。
     - `-x/--exclude`: 排除模式，自动过滤掉噪音（如大量 404 或 403）。
+    - `-ip`：ip显示，支持通过 `-ip` 参数实时查看子域名的 A 记录，快速定位目标基础设施。
 + 🛡️ **健壮性优化**：
     - 线程安全：内置 `threading.Lock` 确保终端输出不乱序。
     - 优雅退出：支持 `Ctrl+C` 捕获，确保程序在退出时能安全释放资源。
@@ -45,6 +48,9 @@ python ShadowScan.py -s 200,301
 
 # 排除 404 状态码
 python ShadowScan.py -x 404
+
+# 显示 IP
+python ShadowScan.py -ip
 ```
 
 ---

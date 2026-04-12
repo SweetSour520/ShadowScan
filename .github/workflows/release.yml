@@ -48,7 +48,7 @@ jobs:
         shell: bash
         run: |
           # 1. 创建一个临时发布的文件夹
-          STAGING="ShadowScan_1.0.0_${{ matrix.os_name }}"
+          STAGING: "ShadowScan_${{ github.ref_name }}_${{ matrix.os_name }}"
           mkdir -p "$STAGING/directory"
           
           # 2. 拷贝二进制文件（从 dist 目录）
