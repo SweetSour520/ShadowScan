@@ -47,19 +47,19 @@ jobs:
       - name: Prepare Workspace and Zip
         shell: bash
         run: |
-          # 1. 创建一个临时发布的文件夹
-          STAGING: "ShadowScan_${{ github.ref_name }}_${{ matrix.os_name }}"
+          # 1. 使用等号定义变量
+          STAGING="ShadowScan_${{ github.ref_name }}_${{ matrix.os_name }}"
           mkdir -p "$STAGING/directory"
           
-          # 2. 拷贝二进制文件（从 dist 目录）
+          # 2. 拷贝二进制文件
           cp dist/${{ matrix.artifact_name }} "$STAGING/"
           
-          # 3. 拷贝字典和文档 
+          # 3. 拷贝资源文件（请务必确认目录名是 directory）
           cp directory/domain_list.txt "$STAGING/directory/"
           cp README.md "$STAGING/"
           cp LICENSE "$STAGING/" || true
           
-          # 4. 打包成 ZIP
+          # 4. 打包
           if [ "${{ matrix.os_name }}" == "win" ]; then
             7z a "$STAGING.zip" "$STAGING"
           else
