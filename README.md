@@ -6,6 +6,7 @@
 
 ![Python](https://img.shields.io/badge/python-3.7+-blue.svg) ![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg) ![Status](https://img.shields.io/badge/status-Developing-orange.svg)
 </div>
+
 ## 📖 简介 / Introduction
 
 **ShadowScan (潜影)** ，一款简易的子域名发现与探活工具。
