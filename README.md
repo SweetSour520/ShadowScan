@@ -29,7 +29,7 @@
 ## 🚀 快速开始 / Quick Start
 ### 1. 环境克隆
 ```bash
-git clone [https://github.com/SweetSour520/ShadowScan.git](https://github.com/SweetSour520/ShadowScan.git)
+git clone https://github.com/SweetSour520/ShadowScan.git
 cd ShadowScan
 ```
 
