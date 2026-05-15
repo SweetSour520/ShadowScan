@@ -1,9 +1,8 @@
 # 👁️ ShadowScan (潜影)
-<div align="center">
-> **Trace the Shadow, Link All Hidden Domains.**
+> **Trace the Shadow, Link All Hidden Domains.** > 人生中第一个子域名扫描工具，不追求新意，存在本身就是它的意义。
 >
-> 人生中第一个子域名扫描工具，不追求新意，存在本身就是它的意义。
 
+<div align="center">
 ![Python](https://img.shields.io/badge/python-3.7+-blue.svg) ![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg) ![Status](https://img.shields.io/badge/status-Developing-orange.svg)
 </div>
 ## 📖 简介 / Introduction
